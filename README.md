@@ -1,2 +1,2 @@
 # TV-show-review-site
-School project
+http://coderrine.github.io/TV-show-review-site/
