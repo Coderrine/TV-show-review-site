@@ -1,0 +1,293 @@
+<!--Megan Imperato
+January 2016
+JS S1 Midterm PeopleBook Project
+Expected Output:
+//FUNCTIONS
+	- Collect data via prompts onClick and add to table
+	- Upload data from file to table
+	For uploaded and collected data, warn if:
+		- numbers in name
+		- not numbers in phone number
+		- email does not contain @
+	ONLY add data to table once confirmed
+	- Search by first name (capitalization shouldn't matter)
+		- Report results (enrty #, name, age, email)
+	- Calculate:
+		- average age 
+		- number of people
+//CSS
+	- image background
+	- table w/ hover effects
+	- semi-transparent backgrounds for stats and search results
+-->
+<!DOCTYPE HTML >
+<html>
+	<head>
+		<style>
+			body{
+				background-image: url("http://images.fineartamerica.com/images-medium-large-5/2-abstract-retro-geometric-pattern-atthamee-ni.jpg");
+			}
+			#title{
+				font-size: 2.5em;
+				color:#604358;
+				font-family: "Verdana";
+				margin-bottom: 1%;
+			}	
+			#buttons {
+				margin-top: .5%;
+				margin-bottom: .5%;
+				text-align: center;
+				color:#604358;
+				font-family: "Verdana";
+			}
+			table{
+				border-collapse: collapse;
+				width:50%;
+				margin-left:25%;
+				text-align: center;
+			}
+			thead {
+				background-color:#83878A;
+				color:white;
+			}
+			tr:hover {
+				background-color: #AAC9B7;
+				font-style: italic;
+				color:#604358;
+			}
+			td{
+				font-size:1em;
+				border-bottom: 2px solid white;
+				font-family: "Verdana";
+			}
+			#upload{
+				font-family: "Verdana";
+				font-size: 1em;
+				color:#604358;
+			}
+			div.info{
+				font-family: "Verdana";
+				font-size: 1em;
+				color:#604358;
+				width:50%;
+    			border-bottom: solid;
+    			border-top: solid;
+    			border-width: 2px;
+    			border-color: #83878A;
+    			margin-top:0.25%;
+    			background:rgba(236,227,169,0.5);
+			}
+		</style>
+		<script>
+			var people= [];
+			//array for the newly made objects to be pushed to
+			var peopleInTable= [];
+			//an official record of the objects that don't get rejected because of validation, to be used when determining stats
+			function makePerson(first, last, age, email) {
+				var obj = {
+					first: first,
+					last: last,
+					age: age,						
+					email: email,
+					display: function () {
+						if (yesInput){
+							//makes a new row and puts the data from the object inside it
+							var newRow= document.createElement("tr");
+							var cell1= document.createElement("td");
+							var cell2= document.createElement("td");
+							var cell3= document.createElement("td");
+							var cell4= document.createElement("td");
+							cell1.innerHTML= this.first;
+							cell2.innerHTML= this.last;
+							cell3.innerHTML= this.age;
+							cell4.innerHTML= this.email;
+							newRow.appendChild(cell1);
+							newRow.appendChild(cell2);
+							newRow.appendChild(cell3);
+							newRow.appendChild(cell4);
+							theTable.appendChild(newRow);
+							peopleInTable.push(obj);
+						}
+					},
+					validate: function(name, email, age, atSym, num) {
+						if (isNaN(this.age)) {
+							age= "\nWARNING: This age contains characters that are not numbers";
+						} else {
+							age= "";
+						}
+						//makes sure age contains numbers
+
+						num=false;
+						for(j=0; j<this.first.length; j++){
+							if(!isNaN(this.first[j])) {
+								num=true;
+							}
+						}
+						for(j=0; j<this.last.length; j++){
+							if(!isNaN(this.last[j])) {
+								num=true;
+							}
+						}
+						if (!num) {
+							name= "";
+						} else {
+							name= "\nWARNING: This name contains numbers";
+						}
+						//checks name for numbers
+
+						atSym=false;
+						for (i=0; i<this.email.length; i++) {
+							if (this.email[i]=="@"){
+								atSym=true;
+							}
+						}
+						if (!atSym) {
+							email= "\nWARNING: This email address does not contain the '@' symbol";
+						} else {
+							email="";
+						}
+						//checks email address for the @ symbol
+
+						yesInput=confirm("Please approve the data:\n\nName: " + this.first + " " + this.last + name+"\n\nEmail Address: " + this.email +email+ "\n\nAge: " + this.age + age+ "\n\nIf you would still like to submit, hit 'OK', if not, select 'cancel' and collect data again.");
+						//confirms addition to table & peopleInTable array
+					}
+				}
+				people.push(obj);
+			};
+
+			function projectMaker(fileName){
+				var reader = new FileReader();	//	when using the FileReader "constructor", a new constructor must be made
+				var fileText;
+				reader.readAsText(fileName);    // here is when the file is read
+				reader.onload = function() {    // this is an event handler that triggers when the file has been read
+					fileText = reader.result;   // this is the file contents
+
+					fileText=fileText.replace(/\n/g, "~");
+					//global flag around "\n" means that the built in replace will operate every time there is a line break, not just on the first one
+					var alreadyThere= people.length-1;
+					//so that not everything in the array will be displayed, only new stuff
+
+					function sort(temp,arrayNew) {
+						temp="";
+						//my temporary variable that will hold values until they can be pushed into an array
+						for (i=0; i<fileText.length;i++) {
+							if (fileText[i]!==",", fileText[i]!=="~") {
+								temp+=fileText[i];
+							}
+							if (fileText[i]=="~") {
+								arrayNew= temp.split(",");
+								//splits the string into an array by the commas
+								console.log(arrayNew);
+								makePerson(arrayNew[0],arrayNew[1],arrayNew[2],arrayNew[3]);
+								//makes object from array elements
+								temp= "";
+								//reset temp
+							}
+
+						};
+					}
+
+					sort();	
+
+					for(m=alreadyThere+1; m<people.length-1; m++){	
+						people[m].validate();
+						//confirms entry
+						people[m].display();
+						//adds entry to table
+					}
+				}
+			}		
+
+			function collectData(count) {
+				first= prompt("First Name:");
+				last= prompt("Last Name:");
+				age= prompt("Age:");
+				email= prompt("Email Address:");
+				makePerson(first, last, age, email);
+				count=people.length-1;
+				people[count].validate();
+				//confirms entry
+				people[count].display();
+				//adds entry
+			}
+
+			function stats(stat,total,age,bold) {
+				total= peopleInTable.length;
+				function averageAge(age) {
+					age=0;
+					for (i=0; i<peopleInTable.length; i++){
+						age=age+Number(peopleInTable[i].age);
+					}
+					return Math.floor(age/peopleInTable.length);
+					//rounds to nearest whole number
+				}
+				age=averageAge();
+				bold1="Number of People: ";
+				bold2=" Average Age: "
+				//format this part to be bold
+				stat=bold1.bold()+total+","+bold2.bold()+age;
+				document.getElementById("stats").innerHTML=stat;
+				//puts the result inside of the div element
+			}
+
+			function search(result,find,print,bold1,bold2) {
+				find= prompt("Search for contact by first name");
+				result="no results";
+				for (i=0; i<peopleInTable.length; i++){
+					if (peopleInTable[i].first.toLowerCase()==find.toLowerCase()) {
+						//capitalization of search will not matter because of toLowerCase method
+						result="Entry "+(i+1)+", Name: "+peopleInTable[i].first+" "+peopleInTable[i].last+", Age: "+peopleInTable[i].age+", Email: "+peopleInTable[i].email;
+					} 	
+				}
+				bold= "Search Results for '"+find+"': ";
+				//format this part to be bold
+				print= bold.bold()+result;
+				document.getElementById("search").innerHTML=print;
+				//puts he result inside the div element
+			}	
+		</script>
+	</head>
+	<body>
+	<!--This bit of code will ask the user to "browse" for the name of a file to read. -->
+		<center>
+			<p id="title">People Book</p>
+			<div id="upload">
+				<h> Upload Contacts:</h>
+				<input type="file" id="fileName" onchange="projectMaker(fileName.files[0])"></input> <!-- input is an HTML tag that asks the user for input and then calls a function, "projectMaker" once a file is selected-->
+			</div>
+			<div id="buttons">
+				<button onclick="collectData()">Collect Data</button>
+				<button onclick="stats()">Calculate/Update Stats</button>
+				<button onclick="search()">Search</button>
+			</div>
+		</center>
+		<script>
+			var theTable= document.createElement("table");
+			//make a table
+			var tableHead= document.createElement("thead");
+			//make some headings on said table
+			var headCell1= document.createElement("td");
+			headCell1.innerHTML= "First Name";
+			//put this inside the heading
+			var headCell2= document.createElement("td");
+			headCell2.innerHTML= "Last Name";
+			var headCell3= document.createElement("td");
+			headCell3.innerHTML= "Age";
+			var headCell4= document.createElement("td");
+			headCell4.innerHTML= "Email Address";
+
+			tableHead.appendChild(headCell1);
+			tableHead.appendChild(headCell2);
+			tableHead.appendChild(headCell3);
+			tableHead.appendChild(headCell4);
+			theTable.appendChild(tableHead);
+			document.body.appendChild(theTable);
+			//APPEND THE CHILDREN (puts the stuff inside the other stuff)
+		</script>
+		<center>
+			<div id= "search" class="info"> </div>
+			<div id= "stats" class="info"> </div>
+		</center>
+
+	</body>
+</html>
