@@ -1,0 +1,178 @@
+<!--Megan Imperato
+December 2015
+JS Q2 People Book Project
+Expected Output:
+Warn If:
+- numbers in name
+- not numbers in phone number
+- email does not contain @
+When cornfimed, add data to table
+-->
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			#title{
+				width:60%;
+				margin-left:34%;
+				font-size: 3em;
+				color:black;
+				font-family: "Verdana";
+			}	
+			table{
+				border-collapse: collapse;
+				width:50%;
+				margin-left:25%;
+				text-align: center;
+			}
+			thead {
+				background-color:#009999;
+				color:white;
+			}
+			tr:hover {
+				background-color:#a8d9d9;
+				font-weight: bold;
+			}
+			td{
+				font-size:1.3em;
+				border-bottom: 1.5px solid #ddd;
+				font-family: "Verdana";
+			}
+			#buttons {
+				text-align: center;
+			}
+			button:hover {
+				background-color:#a8d9d9;
+				color:white;
+			}
+		</style>
+	</head>
+	<body>
+		<p id= "title">My Address Book</p>
+
+		<div id=buttons>
+			<button onclick="collectData()">Collect Data</button>
+			<button onclick="updateTable()">Confirm Addition</button>
+		</div>
+
+		<script>
+			var theTable= document.createElement("table");
+			//make a table
+			var tableHead= document.createElement("thead");
+			//make some headings on said table
+			var headCell1= document.createElement("td");
+			headCell1.innerHTML= "First Name";
+			//put this inside the heading
+			var headCell2= document.createElement("td");
+			headCell2.innerHTML= "Last Name";
+			var headCell3= document.createElement("td");
+			headCell3.innerHTML= "Email Address";
+			var headCell4= document.createElement("td");
+			headCell4.innerHTML= "Phone Number";
+
+			tableHead.appendChild(headCell1);
+			tableHead.appendChild(headCell2);
+			tableHead.appendChild(headCell3);
+			tableHead.appendChild(headCell4);
+			theTable.appendChild(tableHead);
+			document.body.appendChild(theTable);
+			//APPEND THE CHILDREN (puts the stuff inside the other stuff)
+
+			var people= [];
+			//array to put all my objects in
+			var yesInput;
+			//used in validation
+
+			function makePerson(name1, name2, email, phone) {
+				var obj = {
+					nameFirst: name1,
+					nameLast: name2,
+					emailAddress: email,
+					phoneNum: phone,
+					display: function () {
+						if (yesInput){
+							//makes a new row and puts the data from the object inside it
+							var newRow= document.createElement("tr");
+							var cell1= document.createElement("td");
+							var cell2= document.createElement("td");
+							var cell3= document.createElement("td");
+							var cell4= document.createElement("td");
+							cell1.innerHTML= this.nameFirst;
+							cell2.innerHTML= this.nameLast;
+							cell3.innerHTML= this.emailAddress;
+							cell4.innerHTML= this.phoneNum;
+							newRow.appendChild(cell1);
+							newRow.appendChild(cell2);
+							newRow.appendChild(cell3);
+							newRow.appendChild(cell4);
+							theTable.appendChild(newRow);
+						}
+				},
+				validate: function(name, email, phone, atSym, num) {
+					if (isNaN(this.phoneNum)) {
+						phone= "\nWARNING: This phone number contains characters that are not numbers";
+					} else {
+						phone= "";
+					}
+					//makes sure phone number contains numbers
+
+					num=false;
+					for(j=0; j<this.nameFirst.length; j++){
+						if(!isNaN(this.nameFirst[j])) {
+							num=true;
+						}
+					}
+					for(j=0; j<this.nameLast.length; j++){
+						if(!isNaN(this.nameLast[j])) {
+							num=true;
+						}
+					}
+					if (!num) {
+						name= "";
+					} else {
+						name= "\nWARNING: This name contains numbers";
+					}
+					//checks name for numbers
+
+					atSym=false;
+					for (i=0; i<this.emailAddress.length; i++) {
+						if (this.emailAddress[i]=="@"){
+							atSym=true;
+						}
+					}
+					if (!atSym) {
+						email= "\nWARNING: This email address does not contain the '@' symbol";
+					} else {
+						email="";
+					}
+					//checks email address for the @ symbol
+
+					yesInput=confirm("You have inputted the following data:\n\nName: " + this.nameFirst + " " + this.nameLast + name+"\n\nEmail Address: " + this.emailAddress +email+ "\n\nPhone Number: " + this.phoneNum + phone+ "\n\nIf you would still like to submit, hit 'OK', if not, select 'cancel' and collect data again.");
+					}
+				};
+				people.push(obj);
+			}		
+
+			var first;
+			var last;
+			var email;
+			var phone;
+			var counter;
+
+			function collectData() {
+				first= prompt("First Name:");
+				last= prompt("Last Name:");
+				email= prompt("Email Address:");
+				phone= prompt("Phone Number:");
+				makePerson(first, last, email, phone);
+			}
+		
+			function updateTable() {
+				counter= people.length-1;
+				people[counter].validate();
+				people[counter].display();
+			}
+		</script>
+	</body>
+</html>
