@@ -1,0 +1,106 @@
+<!DOCTYPE HTML >
+<html>
+	<head>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+      <script type="text/javascript">
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+        // Set a callback to run when the Google Visualization API is loaded.
+      
+
+        google.charts.load('current', {'packages':['geochart']});
+        google.charts.setOnLoadCallback(drawRegionsMap);
+
+        var states= [];
+
+        //this is just in place until we figure out how we will be collecting data... I needed some data to fill in the map with
+        for (i=0; i<50; i++){
+        	states.push(0+i);
+        }
+
+
+        function drawRegionsMap() {
+
+          var data = google.visualization.arrayToDataTable([
+            ['State', 'Members'],
+            ['Alabama', states[0]],
+            ['Alaska', states[1]],
+            ['Arizona', states[2]],
+            ['Arkansas', states[3]],
+            ['California', states[4]],
+            ['Colorado', states[5]],
+            ['Connecticut', states[6]],
+            ['Delaware', states[7]],
+            ['Florida', states[8]],
+            ['Georgia', states[9]],
+            ['Hawaii', states[10]],
+            ['Idaho', states[11]],
+            ['Illinois', states[12]],
+            ['Indiana', states[13]],
+            ['Iowa', states[14]],
+            ['Kansas', states[15]],
+            ['Kentucky', states[16]],
+            ['Louisiana', states[17]],
+            ['Maine', states[18]],
+            ['Maryland', states[19]],
+            ['Massachusetts', states[20]],
+            ['Michigan', states[21]],
+            ['Minnesota', states[22]],
+            ['Mississippi', states[23]],
+            ['Missouri', states[24]],
+            ['Montana', states[25]],
+            ['Nebraska', states[26]],
+            ['Nevada', states[27]],
+            ['New Hampshire', states[28]],
+            ['New Jersey', states[29]],
+            ['New Mexico', states[30]],
+            ['New York', states[31]],
+            ['North Carolina', states[32]],
+            ['North Dakota', states[33]],
+            ['Ohio', states[34]],
+            ['Oklahoma', states[35]],
+            ['Oregon', states[36]],
+            ['Pennsylvania', states[37]],
+            ['Rhode Island', states[38]],
+            ['South Carolina', states[39]],
+            ['South Dakota', states[40]],
+            ['Tennesse', states[41]],
+            ['Texas', states[42]],
+            ['Utah', states[43]],
+            ['Vermont', states[44]],
+            ['Virgiia', states[45]],
+            ['Washington', states[46]],
+            ['West Virgiia', states[47]],
+            ['Wisconsin', states[48]],
+            ['Wyoming', states[48]]
+          ]);
+
+         var options = {
+            region: 'US',
+            resolution: 'provinces',
+            colorAxis: {colors: ['yellow', 'orange']}
+         };
+
+          var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+          chart.draw(data, options);
+        }
+
+       
+        </script>
+      </head>
+		
+	</head>
+	<body>
+	<!--This bit of code will ask the user to "browse" for the name of a file to read. -->
+		<center>
+			<p id="title">Members</p>
+			<div id= "search" class="info"> </div>
+			<div id= "stats" class="info"> </div>
+			 <div id="regions_div" style="width: 500px; height: 300px;"></div>
+		</center>
+	</body>
+</html>
+
+	 
